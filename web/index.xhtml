@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:composition template="template.xhtml">
+        <ui:define name="top">Welcome to the Movie Browser<div align="justify"><a href="cart.jsp">Cart</a></div><div align="justify"><a href="account.jsp">Account</a></div></ui:define>
+        <ui:define name="body">
+            <script type="text/javascript" src="resources/scripts/jquery-1.8.2.min.js"></script>
+            <script type="text/javascript" src="resources/src/jquery.autocomplete.js"></script>
+            <script type="text/javascript" src="resources/scripts/AutoComplete.js"></script>
+            <script type="text/javascript" src="resources/scripts/films.js"></script>
+            <script type="text/javascript" src="resources/scripts/Actors.js"></script>
+            <form method="post" action="AutoCompleteForward">
+                <div class="container">
+                    <div style="position: relative; height: 80px;">
+                        <input type="text" name="film" id="autocomplete" style="position: absolute; z-index: 2; color: #CCC"/> 
+                    </div>
+                    <input id="selection-button" type="submit"/>
+                    <div id="selection-ajax" name="selection-ajax" type="hidden"></div>
+                </div>
+            </form>
+            <select id="CategoryDropdown" name="CategoryDropdown">
+                <option value="">Please choose a category</option>
+                <option value="indexAction.xhtml">Action</option>
+                <option value="indexAnimation.xhtml">Animation</option>
+                <option value="indexChildren.xhtml">Children</option>
+                <option value="indexClassics.xhtml">Classics</option>
+                <option value="indexComedy.xhtml">Comedy</option>
+                <option value="indexDocumentary.xhtml">Documentary</option>
+                <option value="indexDrama.xhtml">Drama</option>
+                <option value="indexFamily.xhtml">Family</option>
+                <option value="indexForeign.xhtml">Foreign</option>
+                <option value="indexGames.xhtml">Games</option>
+                <option value="indexHorror.xhtml">Horror</option>
+                <option value="indexMusic.xhtml">Music</option>
+                <option value="indexNew.xhtml">New</option>
+                <option value="indexScifi.xhtml">Scifi</option>
+                <option value="indexSports.xhtml">Sports</option>
+                <option value="indexTravel.xhtml">Travel</option>
+                <script type="text/javascript">
+                    function la()
+                    {
+                        var ddl = document.getElementById("CategoryDropdown");
+                        var link = ddl.value;
+                        if (link !== "") {
+                            window.location = link;
+                        }
+                    }
+                </script>
+            </select>
+            <input id="selection-button" type="submit" onclick="la()"/>
+
+
+
+            <h:form>
+                <h:commandLink action="#{filmController.previous}" value="Previous #{filmController.pageSize}" rendered="#{filmController.hasPreviousPage}"/> 
+                <h:commandLink action="#{filmController.next}" value="Next #{filmController.pageSize}" rendered="#{filmController.hasNextPage}"/>
+
+                <h:dataTable value="#{filmController.filmTitles}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Title"/>
+                        </f:facet>
+                        <h:outputText id="title" value="#{item.title}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Description"/>
+                        </f:facet>
+                        <h:outputText value="#{item.description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value=" "/>
+                        </f:facet>
+                        <h:commandLink action="#{filmController.prepareView}" value="View"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value=" "/>
+                        </f:facet>
+                        <form method="post" action="CartAddServlet">
+                            <input name="title" value="#{item.title}" type="hidden"/>
+                            <input name="output" id="output" type="hidden"/>
+                            <script type="text/javascript">
+                                /*jslint sub: true, maxerr: 50, indent: 4, browser: true */
+
+                                (function (global) {
+                                    document.getElementById("output").value = global.localStorage.getItem("mySharedData");
+                                }(window));
+                            </script>
+                            <input type="submit" value="Add to Cart"/>
+                        </form>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value=" "/>
+                        </f:facet>
+                        <form method="post" action="WishListAddServlet">
+                            <input name="title" value="#{item.title}" type="hidden"/>
+                            <input name="output" id="output" type="hidden"/>
+                            <script type="text/javascript">
+                                /*jslint sub: true, maxerr: 50, indent: 4, browser: true */
+
+                                (function (global) {
+                                    document.getElementById("output").value = global.localStorage.getItem("mySharedData");
+                                }(window));
+                            </script>
+                            <input type="submit" value="Add to Wish List"/>
+                        </form>
+                    </h:column>
+                </h:dataTable>
+                <br/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
